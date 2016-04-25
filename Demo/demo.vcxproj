@@ -59,7 +59,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OPENCV_DIR)$(PROCESSOR_ARCHITECTURE)\vc12\lib\</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_world300d.lib</AdditionalDependencies>
-      <LinkStatus>false</LinkStatus>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
@@ -106,6 +105,7 @@
   <ItemGroup>
     <ClCompile Include="demo.cpp" />
     <ClCompile Include="Kernels\demo_Threshold.cpp" />
+    <ClCompile Include="Kernels\demo_ViolaJones.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lib\libopenvx.vcxproj">
