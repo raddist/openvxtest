@@ -362,7 +362,7 @@ vx_status ref_Threshold(const vx_image src_image, vx_image dst_image, const vx_t
         VX_SUCCESS          - в случае успешного завершения;
         VX_ERROR_INVALID_PARAMETERS - в случае некорректных данных.       
 */
-// ref_ViolaJonesDetector
+vx_status ref_ViolaJonesDetector(const vx_image src_image, vx_image dst_image);
 
 
 #endif // __REF_H__

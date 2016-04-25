@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kernels\ref\ref_Threshold.c" />
+    <ClCompile Include="Kernels\ref\ref_ViolaJonesDetector.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CE9D3A27-AB67-4258-9C53-54C3C3C5C533}</ProjectGuid>
