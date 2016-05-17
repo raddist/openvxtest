@@ -42,6 +42,7 @@ IDemoCasePtr CreateThresholdingDemo();
 
 /// TODO: add your demos here
 IDemoCasePtr CreateViolaJonesDemo();
+IDemoCasePtr CreateFindContoursDemo();
 ///////////////////////////////////////////////////////////////////////////////
 
 ///@class Provide showing demo
@@ -60,6 +61,7 @@ public:
       m_demoRegistry.push_back(CreateThresholdingDemo());
       // TODO: add your demos here
 	  m_demoRegistry.push_back(CreateViolaJonesDemo());
+	  m_demoRegistry.push_back(CreateFindContoursDemo());
    }
 
    ///@brief Execute demos

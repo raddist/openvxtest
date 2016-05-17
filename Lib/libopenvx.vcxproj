@@ -22,6 +22,7 @@
     <ClInclude Include="Kernels\ref.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Kernels\ref\ref_FindContours.c" />
     <ClCompile Include="Kernels\ref\ref_Threshold.c" />
     <ClCompile Include="Kernels\ref\ref_ViolaJonesDetector.c" />
   </ItemGroup>
@@ -61,7 +62,7 @@
       <WarningLevel>EnableAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

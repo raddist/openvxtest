@@ -197,6 +197,7 @@ typedef struct _vx_keypoint
     float strength;
 } vx_keypoint;
 
+
 struct _vx_pyramid {
     //Variable: numLevels
     //Количество уровней в пирамиде;

@@ -59,7 +59,7 @@ void demo_Viola_Jones::execute()
 	cv::namedWindow(m_diffWindow, CV_WINDOW_NORMAL);
 
 	const std::string imgPath = "..\\Image\\love1.png";
-	m_srcImage = cv::imread(imgPath, CV_LOAD_IMAGE_COLOR);
+	m_srcImage = cv::imread(imgPath, CV_LOAD_IMAGE_GRAYSCALE);
 	cv::imshow(m_originalWindow, m_srcImage);
 	apply(this);
 
@@ -91,7 +91,7 @@ void demo_Viola_Jones::apply(void* data)
 
 	std::vector<cv::Rect> faces;
 	cv::Mat frame_gray = cvImage.clone();
-	cvtColor(cvImage, frame_gray, cv::COLOR_BGR2GRAY);
+	//cvtColor(cvImage, frame_gray, cv::COLOR_BGR2GRAY);
 
 	equalizeHist(frame_gray, frame_gray);
 
@@ -117,12 +117,33 @@ void demo_Viola_Jones::apply(void* data)
 		}
 	}
 	//-- Show what you got
-	imshow(m_openCVWindow, cvImage);
+	cv::imshow(m_openCVWindow, cvImage);
 	///end test
-
 
 	//cv::imshow(m_openCVWindow, demo->m_srcImage);
 	///@}
+
+	_vx_image srcVXImage = {
+		demo->m_srcImage.data,
+		imgSize.width,
+		imgSize.height,
+		VX_DF_IMAGE_U8,
+		VX_COLOR_SPACE_DEFAULT
+	};
+
+	uint8_t* outVXImage = static_cast<uint8_t*>(calloc(imgSize.width* imgSize.height, sizeof(uint8_t)));
+	_vx_image dstVXImage = {
+		outVXImage,
+		imgSize.width,
+		imgSize.height,
+		VX_DF_IMAGE_U8,
+		VX_COLOR_SPACE_DEFAULT
+	};
+
+	ref_ViolaJonesDetector(&srcVXImage, &dstVXImage);
+
+	const cv::Mat vxImage = cv::Mat(imgSize, CV_8UC1, outVXImage);
+	cv::imshow(m_openVXWindow, vxImage);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 IDemoCasePtr CreateViolaJonesDemo()
