@@ -65,7 +65,7 @@ void demo_FindContours::execute()
 	cv::namedWindow(m_openCVWindow, CV_WINDOW_NORMAL);
 	cv::namedWindow(m_diffWindow, CV_WINDOW_NORMAL);
 
-	const std::string imgPath = "..\\Image\\apple.png";
+	const std::string imgPath = "..\\Image\\pair.png";
 	m_srcImage = cv::imread(imgPath, CV_LOAD_IMAGE_GRAYSCALE);
 	cv::imshow(m_originalWindow, m_srcImage);
 
@@ -97,7 +97,7 @@ void demo_FindContours::applyParameters(int, void* data)
 		drawContours(cvImage, contours, i, color, 1, 8, hierarchy);
 	}
 
-	cv::imshow(m_openCVWindow, cvImage);
+	//cv::imshow(m_openCVWindow, cvImage);
 	///@}
 
 	
@@ -120,26 +120,30 @@ void demo_FindContours::applyParameters(int, void* data)
 		VX_COLOR_SPACE_DEFAULT
 	};
 
-	uint8_t* outVXImage = static_cast<uint8_t*>(calloc(imgSize.width * imgSize.height, sizeof(uint8_t)));
+	//uint8_t* outVXImage = static_cast<uint8_t*>(calloc(imgSize.width * imgSize.height, sizeof(uint8_t)));
+	uint32_t* outVXImage = static_cast<uint32_t*>(calloc(imgSize.width * imgSize.height, sizeof(uint32_t)));
 	_vx_image finalVXImage = {
 		outVXImage,
 		imgSize.width,
 		imgSize.height,
-		VX_DF_IMAGE_U8,
+		VX_DF_IMAGE_RGBX,
 		VX_COLOR_SPACE_DEFAULT
 	};
 
 	ref_Threshold(&srcVXImage, &dstVXImage, &vxThresh);
 	ref_FindContours(&dstVXImage, &finalVXImage);
 
-	const cv::Mat vxImage = cv::Mat(imgSize, CV_8UC1, outVXImage);
+	const cv::Mat vxImage = cv::Mat(imgSize, CV_8UC4, outVXImage);
+	const cv::Mat tempImage = cv::Mat(imgSize, CV_8UC1, tempVXImage);
+
 	cv::imshow(m_openVXWindow, vxImage);
+	cv::imshow(m_openCVWindow, cvImage);
 	///@}
 
 	// Show difference of OpenVX and OpenCV
 	//const cv::Mat diffImage(imgSize, CV_8UC1);
 	//cv::absdiff(vxImage, cvImage, diffImage);
-	//cv::imshow(m_diffWindow, diffImage);
+	cv::imshow(m_diffWindow, tempImage);
 	
 }
 
