@@ -66,6 +66,7 @@ void demo_FindContours::execute()
 	cv::namedWindow(m_diffWindow, CV_WINDOW_NORMAL);
 
 	const std::string imgPath = "..\\Image\\pair.png";
+	//const std::string imgPath = "..\\Image\\Solvay_conference_1927.png";
 	m_srcImage = cv::imread(imgPath, CV_LOAD_IMAGE_GRAYSCALE);
 	cv::imshow(m_originalWindow, m_srcImage);
 
@@ -84,7 +85,7 @@ void demo_FindContours::applyParameters(int, void* data)
 
 	///@{ OPENCV
 	cv::Mat binaryImage;
-	cv::Mat cvImage = cv::Mat::zeros(demo->m_srcImage.rows, demo->m_srcImage.cols, CV_8UC3);
+	cv::Mat cvImage = cv::Mat::zeros(demo->m_srcImage.rows, demo->m_srcImage.cols, CV_8UC4);
 	cv::threshold(demo->m_srcImage, binaryImage, demo->m_threshold, 255, CV_THRESH_BINARY);
 
 	std::vector<std::vector<cv::Point>> contours;
@@ -97,7 +98,7 @@ void demo_FindContours::applyParameters(int, void* data)
 		drawContours(cvImage, contours, i, color, 1, 8, hierarchy);
 	}
 
-	//cv::imshow(m_openCVWindow, cvImage);
+	cv::imshow(m_openCVWindow, cvImage);
 	///@}
 
 	
@@ -137,13 +138,21 @@ void demo_FindContours::applyParameters(int, void* data)
 	const cv::Mat tempImage = cv::Mat(imgSize, CV_8UC1, tempVXImage);
 
 	cv::imshow(m_openVXWindow, vxImage);
-	cv::imshow(m_openCVWindow, cvImage);
 	///@}
 
 	// Show difference of OpenVX and OpenCV
-	//const cv::Mat diffImage(imgSize, CV_8UC1);
-	//cv::absdiff(vxImage, cvImage, diffImage);
-	cv::imshow(m_diffWindow, tempImage);
+	cv::Mat vxBinaryImage;
+	cv::Mat cvBinaryImage;
+	cv::Mat cv_frame_gray;
+	cv::Mat vx_frame_gray;
+
+	cv::cvtColor(cvImage, cv_frame_gray, cv::COLOR_BGRA2GRAY);
+	cvtColor(vxImage, vx_frame_gray, cv::COLOR_BGR2GRAY);
+	cv::threshold(vx_frame_gray, vxBinaryImage, 0, 255, CV_THRESH_BINARY);
+	cv::threshold(cv_frame_gray, cvBinaryImage, 0, 255, CV_THRESH_BINARY);
+	const cv::Mat diffImage(imgSize, CV_8UC1);
+	cv::absdiff(vxBinaryImage, cvBinaryImage, diffImage);
+	cv::imshow(m_diffWindow, diffImage);
 	
 }
 
