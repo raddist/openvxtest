@@ -9,6 +9,12 @@
 #include <time.h>
 #include <malloc.h>
 
+bool is_correct1(int32_t x, int32_t y, const int32_t width, const int32_t height)
+{
+	if ((x < 0) || (y < 0) || (x >= width) || (y >= height))
+		return false;
+	return true;
+}
 
 vx_status ref_ConnectedComponentsLabeling(const vx_image src_image,
 	vx_image dst_image)
@@ -50,7 +56,9 @@ vx_status ref_ConnectedComponentsLabeling(const vx_image src_image,
 
 				for (uint8_t k = 0; k < 4; k++)
 				{
-					if (is_correct(j + seq[k][0], i + seq[k][1], src_width, src_height))
+					bool test = false;
+					test = is_correct1(j + seq[k][0], i + seq[k][1], src_width, src_height);
+					if (test)
 					if ((marked_img[(i + seq[k][1]) * src_width + (j + seq[k][0])] != 0) &&
 						(marked_img[(i + seq[k][1]) * src_width + (j + seq[k][0])] < temp_mark))
 					{
@@ -68,13 +76,16 @@ vx_status ref_ConnectedComponentsLabeling(const vx_image src_image,
 				{
 					for (uint8_t k = 0; k < 4; k++)
 					{
-						uint32_t index = marked_img[(i + seq[k][1]) * src_width + (j + seq[k][0])];
-
-						if (is_correct(j + seq[k][0], i + seq[k][1], src_width, src_height))
-						if ((index != 0) &&
-							(index > temp_mark))
+						if (is_correct1(j + seq[k][0], i + seq[k][1], src_width, src_height))
 						{
-							table_of_mark[index] = temp_mark;
+
+							uint32_t index = marked_img[(i + seq[k][1]) * src_width + (j + seq[k][0])];
+
+							if ((index != 0) &&
+								(index > temp_mark))
+							{
+								table_of_mark[index] = temp_mark;
+							}
 						}
 					}
 				}
@@ -82,7 +93,7 @@ vx_status ref_ConnectedComponentsLabeling(const vx_image src_image,
 		}
 	}
 	
-	
+
 	uint32_t* table_of_color = (uint32_t*)calloc(mark_counter, sizeof(uint32_t));
 	table_of_color[0] = 0;
 
