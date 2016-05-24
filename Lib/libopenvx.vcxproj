@@ -22,6 +22,7 @@
     <ClInclude Include="Kernels\ref.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Kernels\ref\ref_ConnectedComponentsLabeling.c" />
     <ClCompile Include="Kernels\ref\ref_FindContours.c" />
     <ClCompile Include="Kernels\ref\ref_Threshold.c" />
     <ClCompile Include="Kernels\ref\ref_ViolaJonesDetector.c" />

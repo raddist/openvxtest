@@ -1,11 +1,7 @@
-/*
-File: ref_Threshold.c
-Содержит эталонную реализацию пороговой обработки.
-
-Author: Панфилова Кристина
-
-Date: 19 Августа 2015
-*/
+//@file ref_FindContours.c
+//@brief Contains implementation of Find Contours function
+//@author Andrey Belyakov
+//@date 15 May 2016
 
 #include <stdlib.h>
 #include "../ref.h"
@@ -40,8 +36,8 @@ vx_status ref_FindContours(const vx_image src_image,
 	const int32_t src_height = src_image->height;
 	const int32_t dst_width = dst_image->width;
 	const int32_t dst_height = dst_image->height;
-	int32_t indicator = 256;
-	int32_t painter = 0;
+
+	uint32_t painter = 0;
 	int32_t seq[8][2] = { { -1, 0 }, { -1, -1 }, {0, -1}, { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, 1}, { -1, 1} };
 
 	if (src_width != dst_width || src_height != dst_height)
@@ -94,8 +90,6 @@ vx_status ref_FindContours(const vx_image src_image,
 				int last_ind = 0;
 				do
 				{
-					flag = true;
-
 					int ind = last_ind;
 					for (int8_t _k = 0; _k < 8; ++_k)
 					{
@@ -112,14 +106,13 @@ vx_status ref_FindContours(const vx_image src_image,
 								dst_data[(cp.y + seq[k][1]) * src_width + (cp.x + seq[k][0])] |= painter;
 								cp.x = cp.x + seq[k][0];
 								cp.y = cp.y + seq[k][1];
-								flag = false;
 								last_ind = ((k -(k%2)) + 6) % 8;
 								break;
 							}
 						}
 					}
-					counter++;
-				} while (!equalPoint(sp, cp) && !flag && counter < 1000);
+					//counter++;
+				} while (!equalPoint(sp, cp));
 				
 			}
 			if (src_data[i * src_width + j] == 0)

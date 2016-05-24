@@ -68,5 +68,8 @@
     <ClCompile Include="Kernels\ref\ref_FindContours.c">
       <Filter>Source Files\Kernels</Filter>
     </ClCompile>
+    <ClCompile Include="Kernels\ref\ref_ConnectedComponentsLabeling.c">
+      <Filter>Source Files\Kernels</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
