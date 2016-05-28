@@ -1,4 +1,4 @@
-//@file demo_FindContours.h
+//@file demo_FindContours.cpp
 //@brief Contains demonstration of FInd contours function in comparing with OpenCV
 //@author Andrey Belyakov
 //@date 15 May 2016
@@ -33,7 +33,7 @@ public:
 	///@see IDemoCase::ReplyName
 	virtual std::string ReplyName() const override
 	{
-		return "Find contours";
+		return "Find Contours";
 	}
 
 private:

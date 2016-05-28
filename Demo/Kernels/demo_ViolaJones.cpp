@@ -123,22 +123,22 @@ void demo_Viola_Jones::apply(void* data)
 	//cv::imshow(m_openCVWindow, demo->m_srcImage);
 	///@}
 
-	_vx_image srcVXImage = {
+	/*_vx_image srcVXImage = {
 		demo->m_srcImage.data,
 		imgSize.width,
 		imgSize.height,
 		VX_DF_IMAGE_U8,
 		VX_COLOR_SPACE_DEFAULT
-	};
+	};*/
 
 	uint8_t* outVXImage = static_cast<uint8_t*>(calloc(imgSize.width* imgSize.height, sizeof(uint8_t)));
-	_vx_image dstVXImage = {
+	/*_vx_image dstVXImage = {
 		outVXImage,
 		imgSize.width,
 		imgSize.height,
 		VX_DF_IMAGE_U8,
 		VX_COLOR_SPACE_DEFAULT
-	};
+	};*/
 
 	//ref_ViolaJonesDetector(&srcVXImage, &dstVXImage);
 

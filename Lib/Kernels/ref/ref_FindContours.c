@@ -26,6 +26,8 @@ vx_status ref_FindContours(const vx_image src_image,
 	}
 
 	uint32_t painter = 0;
+
+	/// @ note seq - array of relative paths to every neighbor pixels
 	int32_t seq[8][2] = { { -1, 0 }, { -1, -1 }, {0, -1}, { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, 1}, { -1, 1} };
 
 	const uint8_t* src_data = src_image->data;
