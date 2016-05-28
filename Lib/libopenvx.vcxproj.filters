@@ -57,12 +57,12 @@
     <ClInclude Include="Common\openvx\vxu.h">
       <Filter>Header Files\Common\openvx</Filter>
     </ClInclude>
+    <ClInclude Include="Common\check_elem.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kernels\ref\ref_Threshold.c">
-      <Filter>Source Files\Kernels</Filter>
-    </ClCompile>
-    <ClCompile Include="Kernels\ref\ref_ViolaJonesDetector.c">
       <Filter>Source Files\Kernels</Filter>
     </ClCompile>
     <ClCompile Include="Kernels\ref\ref_FindContours.c">
@@ -70,6 +70,9 @@
     </ClCompile>
     <ClCompile Include="Kernels\ref\ref_ConnectedComponentsLabeling.c">
       <Filter>Source Files\Kernels</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\check_elem.c">
+      <Filter>Source Files\Common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

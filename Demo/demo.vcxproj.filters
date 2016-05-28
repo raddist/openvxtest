@@ -30,6 +30,9 @@
     <ClCompile Include="Kernels\demo_FindContours.cpp">
       <Filter>Source Files\Kernels</Filter>
     </ClCompile>
+    <ClCompile Include="Kernels\demo_ConnectedComponentsLabeling.cpp">
+      <Filter>Source Files\Kernels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DemoEngine.h">

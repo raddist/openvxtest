@@ -140,7 +140,7 @@ void demo_Viola_Jones::apply(void* data)
 		VX_COLOR_SPACE_DEFAULT
 	};
 
-	ref_ViolaJonesDetector(&srcVXImage, &dstVXImage);
+	//ref_ViolaJonesDetector(&srcVXImage, &dstVXImage);
 
 	const cv::Mat vxImage = cv::Mat(imgSize, CV_8UC1, outVXImage);
 	cv::imshow(m_openVXWindow, vxImage);

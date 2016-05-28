@@ -19,6 +19,7 @@
 #include "../Common/openvx/vx_types.h"
 
 #include "../Common/types.h"
+#include "../Common/check_elem.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //                    ПРИМЕР РЕАЛИЗОВАННОЙ ФУНКЦИИ
@@ -53,7 +54,7 @@ vx_status ref_Threshold(const vx_image src_image, vx_image dst_image, const vx_t
 /*
     Function: ref_ConnectedComponentsLabeling
 
-    Описание фукнции
+    Описание функции
 
     Parameters (пример):
         src_image           - входное изображение;
@@ -188,17 +189,20 @@ vx_status ref_ConnectedComponentsLabeling(const vx_image src_image, vx_image dst
 /*
     Function: ref_FindContours
 
-    Описание фукнции
+    Описание функции
 
     Parameters (пример):
         src_image           - входное изображение;
         dst_image           - выходное изображение;
+		iter				- количество проходов по изображению (от 1 до 4)
+			При каждом проходе изменяется условие нахождения начальных точек контуров.
+			Чем больше значение iter, тем меньше граничных точек остаются незамечеными.
 
     Return:
         VX_SUCCESS          - в случае успешного завершения;
         VX_ERROR_INVALID_PARAMETERS - в случае некорректных данных.       
 */
-vx_status ref_FindContours(const vx_image src_image, vx_image dst_image);
+vx_status ref_FindContours(const vx_image src_image, vx_image dst_image, const uint8_t iter);
 
 /*
     Function: ref_HoughLines
@@ -363,7 +367,7 @@ vx_status ref_FindContours(const vx_image src_image, vx_image dst_image);
         VX_SUCCESS          - в случае успешного завершения;
         VX_ERROR_INVALID_PARAMETERS - в случае некорректных данных.       
 */
-vx_status ref_ViolaJonesDetector(const vx_image src_image, vx_image dst_image);
+//vx_status ref_ViolaJonesDetector(const vx_image src_image, vx_image dst_image);
 
 
 #endif // __REF_H__

@@ -1,14 +1,11 @@
-//@file demo_FindContours.h
-//@brief Contains demonstration of FInd contours function in comparing with OpenCV
+//@file demo_ConnectedComponentsLabeling.cpp
+//@brief Contains demonstration of ConnectedComponentsLabeling function in comparing with OpenCV
 //@author Andrey Belyakov
-//@date 15 May 2016
+//@date 22 May 2016
 
 #include "../stdafx.h"
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv/highgui.h>
-#include <stdlib.h>
 
 extern "C"
 {
@@ -19,12 +16,12 @@ extern "C"
 #include "../DemoEngine.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-//@brief Demonstration of Threshold function
-class demo_FindContours : public IDemoCase
+//@brief Demonstration of ConnectedComponentsLabeling function
+class demo_ConnectedComponentsLabeling : public IDemoCase
 {
 public:
 	///@brief default ctor
-	demo_FindContours()
+	demo_ConnectedComponentsLabeling()
 		: m_threshold(127)
 	{
 		// nothing to do
@@ -33,7 +30,7 @@ public:
 	///@see IDemoCase::ReplyName
 	virtual std::string ReplyName() const override
 	{
-		return "Find contours";
+		return "ConnectedComponentsLabeling";
 	}
 
 private:
@@ -55,21 +52,19 @@ namespace
 	const std::string m_openCVWindow = "openCV";
 	const std::string m_originalWindow = "original";
 	const std::string m_diffWindow = m_openVXWindow + "-" + m_openCVWindow;
-	const std::string m_binaryWindow = "binary";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void demo_FindContours::execute()
+void demo_ConnectedComponentsLabeling::execute()
 {
-	cv::namedWindow(m_originalWindow, CV_WINDOW_AUTOSIZE);
+	cv::namedWindow(m_originalWindow, CV_WINDOW_NORMAL);
 	cv::namedWindow(m_openVXWindow, CV_WINDOW_NORMAL);
 	cv::namedWindow(m_openCVWindow, CV_WINDOW_NORMAL);
 	cv::namedWindow(m_diffWindow, CV_WINDOW_NORMAL);
-	cv::namedWindow(m_binaryWindow, CV_WINDOW_NORMAL);
 
+	//const std::string imgPath = "..\\Image\\test.jpg";
 	//const std::string imgPath = "..\\Image\\frac2.png";
-	const std::string imgPath = "..\\Image\\pair.png";
-	//const std::string imgPath = "..\\Image\\Solvay_conference_1927.png";
+	const std::string imgPath = "..\\Image\\Solvay_conference_1927.png";
 	m_srcImage = cv::imread(imgPath, CV_LOAD_IMAGE_GRAYSCALE);
 	cv::imshow(m_originalWindow, m_srcImage);
 
@@ -80,31 +75,37 @@ void demo_FindContours::execute()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void demo_FindContours::applyParameters(int, void* data)
+void demo_ConnectedComponentsLabeling::applyParameters(int, void* data)
 {
-	auto demo = static_cast<demo_FindContours*>(data);
+	auto demo = static_cast<demo_ConnectedComponentsLabeling*>(data);
 
 	const cv::Size imgSize(demo->m_srcImage.cols, demo->m_srcImage.rows);
 
 	///@{ OPENCV
 	cv::Mat binaryImage;
-	cv::Mat cvImage = cv::Mat::zeros(demo->m_srcImage.rows, demo->m_srcImage.cols, CV_8UC4);
+	cv::Mat labels(imgSize, CV_32S);
+	cv::Mat cvImage = cv::Mat::zeros(demo->m_srcImage.rows, demo->m_srcImage.cols, CV_8UC3);
 	cv::threshold(demo->m_srcImage, binaryImage, demo->m_threshold, 255, CV_THRESH_BINARY);
 
-	std::vector<std::vector<cv::Point>> contours;
-	std::vector<cv::Vec4i> hierarchy;
+	int nLabels = connectedComponents(binaryImage, labels, 8);
+	std::vector<cv::Vec3b> colors(nLabels);
+	//background
+	colors[0] = cv::Vec3b(0, 0, 0);			
+	for (int label = 1; label < nLabels; ++label){
+		colors[label] = cv::Vec3b((rand() & 255), (rand() & 255), (rand() & 255));
+	}
 
-	cv::findContours(binaryImage, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
-	for (int i = 0; i < static_cast<int>(contours.size()); ++i)
-	{
-		cv::Scalar color(rand() & 255, rand() & 255, rand() & 255);
-		drawContours(cvImage, contours, i, color, 1, 8, hierarchy);
+	for (int r = 0; r < cvImage.rows; ++r){
+		for (int c = 0; c < cvImage.cols; ++c){
+			int label = labels.at<int>(r, c);
+			cv::Vec3b &pixel = cvImage.at<cv::Vec3b>(r, c);
+			pixel = colors[label];
+		}
 	}
 
 	cv::imshow(m_openCVWindow, cvImage);
 	///@}
 
-	
 	///@{ OPENVX
 	_vx_threshold vxThresh = { VX_THRESHOLD_TYPE_BINARY, uint8_t(demo->m_threshold), 0/* dummy value */, 255 /* dummy value */ };
 	_vx_image srcVXImage = {
@@ -124,7 +125,6 @@ void demo_FindContours::applyParameters(int, void* data)
 		VX_COLOR_SPACE_DEFAULT
 	};
 
-	//uint8_t* outVXImage = static_cast<uint8_t*>(calloc(imgSize.width * imgSize.height, sizeof(uint8_t)));
 	uint32_t* outVXImage = static_cast<uint32_t*>(calloc(imgSize.width * imgSize.height, sizeof(uint32_t)));
 	_vx_image finalVXImage = {
 		outVXImage,
@@ -135,35 +135,17 @@ void demo_FindContours::applyParameters(int, void* data)
 	};
 
 	ref_Threshold(&srcVXImage, &dstVXImage, &vxThresh);
-	ref_FindContours(&dstVXImage, &finalVXImage, 4);
+	ref_ConnectedComponentsLabeling(&dstVXImage, &finalVXImage);
 
 	const cv::Mat vxImage = cv::Mat(imgSize, CV_8UC4, outVXImage);
 	const cv::Mat tempImage = cv::Mat(imgSize, CV_8UC1, tempVXImage);
 
 	cv::imshow(m_openVXWindow, vxImage);
-	///@}
-
-	// Show binary image
-	cv::imshow(m_binaryWindow, tempImage);
-
-	// Show difference of OpenVX and OpenCV
-	cv::Mat vxBinaryImage;
-	cv::Mat cvBinaryImage;
-	cv::Mat cv_frame_gray;
-	cv::Mat vx_frame_gray;
-
-	cv::cvtColor(cvImage, cv_frame_gray, cv::COLOR_BGRA2GRAY);
-	cvtColor(vxImage, vx_frame_gray, cv::COLOR_BGR2GRAY);
-	cv::threshold(vx_frame_gray, vxBinaryImage, 0, 255, CV_THRESH_BINARY);
-	cv::threshold(cv_frame_gray, cvBinaryImage, 0, 255, CV_THRESH_BINARY);
-	const cv::Mat diffImage(imgSize, CV_8UC1);
-	cv::absdiff(vxBinaryImage, cvBinaryImage, diffImage);
-	cv::imshow(m_diffWindow, diffImage);
-	
+	cv::imshow(m_diffWindow, tempImage);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-IDemoCasePtr CreateFindContoursDemo()
+IDemoCasePtr CreateConnectedComponentsLabelingDemo()
 {
-	return std::make_unique<demo_FindContours>();
+	return std::make_unique<demo_ConnectedComponentsLabeling>();
 }

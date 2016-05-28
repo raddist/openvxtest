@@ -1,4 +1,4 @@
-//@file demo_Threshold.h
+//@file demo_Threshold.cpp
 //@brief Contains demonstration of Threshold function in comparing with OpenCV
 //@author Roman Golovanov
 //@date 23 March 2016

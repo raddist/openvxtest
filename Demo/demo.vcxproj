@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="demo.cpp" />
+    <ClCompile Include="Kernels\demo_ConnectedComponentsLabeling.cpp" />
     <ClCompile Include="Kernels\demo_FindContours.cpp" />
     <ClCompile Include="Kernels\demo_Threshold.cpp" />
     <ClCompile Include="Kernels\demo_ViolaJones.cpp" />

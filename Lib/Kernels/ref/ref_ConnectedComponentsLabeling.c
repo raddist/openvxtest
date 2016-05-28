@@ -1,6 +1,6 @@
 //@file ref_ConnectedComponentsLabeling.c
 //@brief implementation of the ConnectedComponentsLabeling algorithm
-//@author ANdrey Belyakov
+//@author Andrey Belyakov
 //@date 24 May 2016
 
 
@@ -9,8 +9,10 @@
 #include <time.h>
 #include <malloc.h>
 
-///@brief func for finding correct coordinates of pixels (from ref_FindContours.c)
-extern bool is_correct(int32_t x, int32_t y, const int32_t width, const int32_t height);
+static uint32_t getMinIndex(uint32_t* arr, uint32_t ind)
+{
+	return (arr[ind] == ind) ? ind : getMinIndex(arr, arr[ind]);
+}
 
 vx_status ref_ConnectedComponentsLabeling(const vx_image src_image,
 	vx_image dst_image)
@@ -32,7 +34,7 @@ vx_status ref_ConnectedComponentsLabeling(const vx_image src_image,
 
 	uint32_t mark_counter = 1;
 
-	srand(time(0));
+	srand((unsigned int)time(0));
 
 
 	uint32_t* marked_img = (uint32_t*)calloc(src_width * src_height, sizeof(uint32_t));
@@ -52,23 +54,26 @@ vx_status ref_ConnectedComponentsLabeling(const vx_image src_image,
 
 				for (uint8_t k = 0; k < 4; k++)
 				{
-					bool test = false;
-					test = is_correct(j + seq[k][0], i + seq[k][1], src_width, src_height);
-					if (test)
-					if ((marked_img[(i + seq[k][1]) * src_width + (j + seq[k][0])] != 0) &&
-						(marked_img[(i + seq[k][1]) * src_width + (j + seq[k][0])] < temp_mark))
+					if (is_correct(j + seq[k][0], i + seq[k][1], src_width, src_height))
 					{
-						temp_mark = marked_img[(i + seq[k][1]) * src_width + (j + seq[k][0])];
+						uint32_t index = marked_img[(i + seq[k][1]) * src_width + (j + seq[k][0])];
+						table_of_mark[index] = getMinIndex(table_of_mark, index);
+
+						if ((index != 0) &&
+							(table_of_mark[index] < temp_mark))
+						{
+							temp_mark = table_of_mark[index];
+						}
 					}
 				}
 				marked_img[i  * src_width + j] = temp_mark;
 
-					dst_data[i  * src_width + j] |= 255;
 				if (temp_mark == mark_counter)
 				{
 					table_of_mark[mark_counter] = mark_counter;
 					mark_counter++;
 				}
+				else
 				{
 					for (uint8_t k = 0; k < 4; k++)
 					{
@@ -78,17 +83,17 @@ vx_status ref_ConnectedComponentsLabeling(const vx_image src_image,
 							uint32_t index = marked_img[(i + seq[k][1]) * src_width + (j + seq[k][0])];
 
 							if ((index != 0) &&
-								(index > temp_mark))
+								(table_of_mark[index] > temp_mark))
 							{
 								table_of_mark[index] = temp_mark;
 							}
 						}
 					}
 				}
+
 			}
 		}
 	}
-	
 
 	uint32_t* table_of_color = (uint32_t*)calloc(mark_counter, sizeof(uint32_t));
 	table_of_color[0] = 0;
@@ -112,11 +117,15 @@ vx_status ref_ConnectedComponentsLabeling(const vx_image src_image,
 		{
 			if ((marked_img[i  * src_width + j] != 0))
 			{
-				marked_img[i  * src_width + j] = table_of_mark[marked_img[i  * src_width + j]];
+					marked_img[i  * src_width + j] = table_of_mark[marked_img[i  * src_width + j]];
 
-				dst_data[i  * src_width + j] |= table_of_color[marked_img[i  * src_width + j]];
+					dst_data[i  * src_width + j] |= table_of_color[marked_img[i  * src_width + j]];
 			}
 		}
 	}
+	free(marked_img);
+	free(table_of_mark);
+	free(table_of_color);
+
 	return VX_SUCCESS;
 }
